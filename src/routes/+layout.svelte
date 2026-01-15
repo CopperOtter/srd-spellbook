@@ -13,8 +13,6 @@
 		{ href: '/tracker', label: 'Tracker', icon: '⚡' },
 		{ href: '/settings', label: 'Settings', icon: '⚙️' }
 	];
-
-	export const prerender = true;
 </script>
 
 <div class="min-h-screen flex flex-col">
