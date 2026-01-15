@@ -2,6 +2,7 @@
 	import type { Spell, SpellFilters } from '$lib/types';
 	import SpellTooltipCard from './SpellTooltipCard.svelte';
 	import AddToTrackerDialog from './AddToTrackerDialog.svelte';
+	import { browser } from '$app/environment';
 
 	interface Props {
 		spell: Spell;
@@ -19,7 +20,17 @@
 	let isMouseOverTooltip = $state(false);
 	let showAddDialog = $state(false);
 
-	const TOOLTIP_DELAY = 1000; // 1 second
+	// Touch/long-press state
+	let longPressTimeout: ReturnType<typeof setTimeout> | null = $state(null);
+	let touchStartX = $state(0);
+	let touchStartY = $state(0);
+	let didLongPress = $state(false);
+
+	const TOOLTIP_DELAY = 1000; // 1 second for hover
+	const LONG_PRESS_DELAY = 500; // 500ms for long-press
+
+	// Detect touch device
+	const isTouchDevice = $derived(browser && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
 
 	function getSchoolClass(school: string): string {
 		return `school-${school.toLowerCase()}`;
@@ -140,6 +151,8 @@
 	}
 
 	function handleClick() {
+		// On touch devices, click is handled by touch events
+		if (isTouchDevice) return;
 		closeTooltip();
 		showAddDialog = true;
 	}
@@ -147,8 +160,63 @@
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			handleClick();
+			closeTooltip();
+			showAddDialog = true;
 		}
+	}
+
+	// Touch event handlers
+	function handleTouchStart(e: TouchEvent) {
+		const touch = e.touches[0];
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+		cursorX = touch.clientX;
+		cursorY = touch.clientY;
+		didLongPress = false;
+
+		longPressTimeout = setTimeout(() => {
+			didLongPress = true;
+			showTooltip = true;
+		}, LONG_PRESS_DELAY);
+	}
+
+	function handleTouchMove(e: TouchEvent) {
+		// Cancel long-press if finger moves too much
+		const touch = e.touches[0];
+		const deltaX = Math.abs(touch.clientX - touchStartX);
+		const deltaY = Math.abs(touch.clientY - touchStartY);
+		
+		if (deltaX > 10 || deltaY > 10) {
+			if (longPressTimeout) {
+				clearTimeout(longPressTimeout);
+				longPressTimeout = null;
+			}
+		}
+	}
+
+	function handleTouchEnd(e: TouchEvent) {
+		if (longPressTimeout) {
+			clearTimeout(longPressTimeout);
+			longPressTimeout = null;
+		}
+
+		// If long-press triggered, don't open dialog
+		if (didLongPress) {
+			didLongPress = false;
+			return;
+		}
+
+		// Short tap: open dialog
+		e.preventDefault(); // Prevent click from firing
+		showAddDialog = true;
+	}
+
+	function handleTouchCancel() {
+		if (longPressTimeout) {
+			clearTimeout(longPressTimeout);
+			longPressTimeout = null;
+		}
+		didLongPress = false;
 	}
 </script>
 
@@ -158,7 +226,8 @@
 	tabindex="0"
 	class="group p-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] 
 		border border-[var(--color-border)] rounded-lg cursor-pointer transition-colors
-		focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)]"
+		focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)]
+		select-none touch-manipulation"
 	onclick={handleClick}
 	onkeydown={handleKeydown}
 	onmouseenter={handleMouseEnter}
@@ -166,6 +235,10 @@
 	onmouseleave={handleMouseLeave}
 	onfocus={handleFocus}
 	onblur={handleBlur}
+	ontouchstart={handleTouchStart}
+	ontouchmove={handleTouchMove}
+	ontouchend={handleTouchEnd}
+	ontouchcancel={handleTouchCancel}
 >
 	<div class="flex items-start justify-between gap-3">
 		<!-- Left: Name, School, Brief -->
