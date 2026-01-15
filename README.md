@@ -11,6 +11,19 @@ A fast, compact SRD spell browser with delayed "full card" tooltips and a practi
 - **Character Profiles**: Save caster type, class, and domains to localStorage
 - **Import/Export**: Backup and restore your profile data as JSON
 
+## Usage
+
+### Desktop
+
+- **Hover** on a spell row for 1 second → Shows tooltip with full spell details
+- **Click** on a spell row → Opens "Add to Tracker" dialog
+
+### Mobile / Touch Devices
+
+- **Tap** on a spell row → Opens "Add to Tracker" dialog directly
+- **Long-press** (500ms) on a spell row → Shows tooltip with full spell details
+- **Tap outside** the tooltip → Closes the tooltip
+
 ## Getting Started
 
 ### Prerequisites

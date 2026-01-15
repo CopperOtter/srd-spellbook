@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 	import type { Spell } from '$lib/types';
 
 	interface Props {
@@ -16,6 +17,9 @@
 
 	let tooltipEl: HTMLDivElement | null = $state(null);
 	let isMouseOver = $state(false);
+
+	// Detect touch device
+	const isTouchDevice = $derived(browser && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
 
 	function formatLevels(spell: Spell): string {
 		const parts: string[] = [];
@@ -127,6 +131,16 @@
 </script>
 
 {#if visible}
+	<!-- Backdrop for touch devices - tap outside to close -->
+	{#if isTouchDevice}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div 
+			class="fixed inset-0 z-40" 
+			onclick={onClose}
+			ontouchstart={onClose}
+		></div>
+	{/if}
 	<div
 		bind:this={tooltipEl}
 		role="tooltip"

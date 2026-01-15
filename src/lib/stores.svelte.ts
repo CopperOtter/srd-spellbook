@@ -7,6 +7,7 @@ import type {
   PreparedEntry,
   CasterClass,
 } from "./types";
+import { asset } from "$app/paths";
 
 // Spell data store
 let spells = $state<Spell[]>([]);
@@ -49,7 +50,7 @@ export async function loadSpells(): Promise<void> {
   if (spellsLoaded) return;
 
   try {
-    const response = await fetch("/spells.json");
+    const response = await fetch(asset("/spells.json"));
     if (!response.ok) {
       throw new Error(`Failed to load spells: ${response.statusText}`);
     }

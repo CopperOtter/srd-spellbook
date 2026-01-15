@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 </script>
 
 <svelte:head>
@@ -15,14 +15,14 @@
 	
 	<div class="flex gap-4">
 		<a
-			href="/spells"
+			href={resolve("/spells")}
 			class="flex items-center gap-2 px-6 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-medium rounded-lg transition-colors"
 		>
 			<span>📜</span>
 			<span>Browse Spells</span>
 		</a>
 		<a
-			href="/tracker"
+			href={resolve("/tracker")}
 			class="flex items-center gap-2 px-6 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text)] font-medium rounded-lg border border-[var(--color-border)] transition-colors"
 		>
 			<span>⚡</span>
