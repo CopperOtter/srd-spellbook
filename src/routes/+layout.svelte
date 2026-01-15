@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 
 	interface Props {
@@ -9,9 +10,9 @@
 	let { children }: Props = $props();
 
 	const navItems = [
-		{ href: '/spells', label: 'Spells', icon: '📜' },
-		{ href: '/tracker', label: 'Tracker', icon: '⚡' },
-		{ href: '/settings', label: 'Settings', icon: '⚙️' }
+		{ href: resolve('/spells'), label: 'Spells', icon: '📜' },
+		{ href: resolve('/tracker'), label: 'Tracker', icon: '⚡' },
+		{ href: resolve('/settings'), label: 'Settings', icon: '⚙️' }
 	];
 </script>
 
@@ -19,7 +20,7 @@
 	<!-- Header -->
 	<header class="bg-[var(--color-surface)] border-b border-[var(--color-border)] px-4 py-3">
 		<div class="max-w-6xl mx-auto flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+			<a href={resolve('/')} class="flex items-center gap-2 hover:opacity-80 transition-opacity">
 				<h1 class="text-xl font-bold text-[var(--color-text)]">SRD Spellbook</h1>
 				<span class="text-xs text-[var(--color-text-muted)] bg-[var(--color-surface-hover)] px-2 py-0.5 rounded">3.5</span>
 			</a>
@@ -51,7 +52,7 @@
 	<!-- Footer -->
 	<footer class="bg-[var(--color-surface)] border-t border-[var(--color-border)] px-4 py-3">
 		<div class="max-w-6xl mx-auto text-center text-xs text-[var(--color-text-muted)]">
-			SRD content is Open Game Content. See <a href="/settings" class="underline hover:text-[var(--color-text)]">Settings</a> for license info.
+			SRD content is Open Game Content. See <a href={resolve("/settings")} class="underline hover:text-[var(--color-text)]">Settings</a> for license info.
 		</div>
 	</footer>
 </div>
