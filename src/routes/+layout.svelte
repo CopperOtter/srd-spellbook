@@ -12,7 +12,7 @@
 	const navItems = [
 		{ href: resolve('/spells'), label: 'Spells', icon: '📜' },
 		{ href: resolve('/tracker'), label: 'Tracker', icon: '⚡' },
-		{ href: resolve('/settings'), label: 'Settings', icon: '⚙️' }
+		{ href: resolve('/settings'), label: '', icon: '⚙️' }
 	];
 </script>
 
