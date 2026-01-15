@@ -25,6 +25,7 @@
 	let touchStartX = $state(0);
 	let touchStartY = $state(0);
 	let didLongPress = $state(false);
+	let didScroll = $state(false);
 
 	const TOOLTIP_DELAY = 1000; // 1 second for hover
 	const LONG_PRESS_DELAY = 500; // 500ms for long-press
@@ -173,6 +174,7 @@
 		cursorX = touch.clientX;
 		cursorY = touch.clientY;
 		didLongPress = false;
+		didScroll = false;
 
 		longPressTimeout = setTimeout(() => {
 			didLongPress = true;
@@ -181,12 +183,13 @@
 	}
 
 	function handleTouchMove(e: TouchEvent) {
-		// Cancel long-press if finger moves too much
+		// Cancel long-press and tap if finger moves too much (scrolling)
 		const touch = e.touches[0];
 		const deltaX = Math.abs(touch.clientX - touchStartX);
 		const deltaY = Math.abs(touch.clientY - touchStartY);
 		
 		if (deltaX > 10 || deltaY > 10) {
+			didScroll = true;
 			if (longPressTimeout) {
 				clearTimeout(longPressTimeout);
 				longPressTimeout = null;
@@ -200,9 +203,10 @@
 			longPressTimeout = null;
 		}
 
-		// If long-press triggered, don't open dialog
-		if (didLongPress) {
+		// If long-press triggered or user scrolled, don't open dialog
+		if (didLongPress || didScroll) {
 			didLongPress = false;
+			didScroll = false;
 			return;
 		}
 
@@ -217,6 +221,7 @@
 			longPressTimeout = null;
 		}
 		didLongPress = false;
+		didScroll = false;
 	}
 </script>
 
